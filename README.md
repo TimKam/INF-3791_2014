@@ -20,9 +20,11 @@ in order to improve the information value of location, climate and pollution dat
 
 Own conceptual and technological approaches are encouraged.
 
+![alt tag](https://raw.githubusercontent.com/TimKam/INF-3791_2014/master/DOC/COPD_App.png)
 
 Helpful Technical Links & Resources:
 * Android Development:
+
 	Installation:
 	https://developer.android.com/sdk/installing/index.html
 	
@@ -31,6 +33,7 @@ Helpful Technical Links & Resources:
 	http://www.youtube.com/watch?v=SUOWNXGRc6g&list=PL023BC9408BAFEC0C
 
 * API Documentation:
+
 	Weather:
 	http://api.met.no/weatherapi/locationforecast/1.9/documentation
 	Traffic:
