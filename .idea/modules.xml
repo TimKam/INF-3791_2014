@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$USER_HOME$/Documents/Progging/Android/android-sdk-macosx/extras/android/support/v7/appcompat/android-support-v7-appcompat.iml" filepath="$USER_HOME$/Documents/Progging/Android/android-sdk-macosx/extras/android/support/v7/appcompat/android-support-v7-appcompat.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AndroidApplication/copdMgmtApp.iml" filepath="$PROJECT_DIR$/AndroidApplication/copdMgmtApp.iml" />
+    </modules>
+  </component>
+</project>
+

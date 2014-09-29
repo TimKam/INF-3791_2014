@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">copdMgmtApp</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="app_name">Air Pollution</string>
+    <string name="hello_world">This is an app to show air pollution within an area..!</string>
     <string name="action_settings">Settings</string>
 
 </resources>
