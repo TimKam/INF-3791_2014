@@ -19,3 +19,5 @@ AndroidApplication/copdMgmtApp.iml
 AndroidApplication/bin/classes/copdMgmtApp.apk
 
 AndroidApplication/gen/com/example/copdmgmtapp/BuildConfig.java
+
+.idea/workspace.xml
