@@ -5,8 +5,9 @@
     <string name="place">Tromsø</string>
     <string name="weather">SUN</string>
     <string name="temperature">Temp</string>
-    <string name="button_send">Send</string>
+    <string name="airPol">Insert Air Polution information here</string>
     <string name="hello_world">This is an app to show air pollution within an area..!</string>
+    <string name="trafficText">Insert Traffic information here</string>
     <string name="action_settings">Settings</string>
 
 </resources>
