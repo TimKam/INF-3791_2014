@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -18,11 +19,15 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import java.net.*;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -30,7 +35,7 @@ public class MainActivity extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		Thread thread = new Thread()
+		Thread metThread = new Thread()
 		{
 			@Override
 		    public void run() 
@@ -68,9 +73,68 @@ public class MainActivity extends ActionBarActivity {
 			    }
 		    }
 		};
-		
-		thread.start();
-		
+		Thread pollutionThread = new Thread()
+		{
+			@Override
+		    public void run() 
+		    {
+		    	//API calls example (http://stackoverflow.com/questions/4457492/how-do-i-use-the-simple-http-client-in-android):
+				HttpClient httpclient = new DefaultHttpClient();
+			    // Prepare a request object
+				//String station = "{49ba925d-7e72-4a1f-b4ec-f63086161e29}"; //Tverrforbindelsen
+				String station = "{e3b8f62d-ae81-421a-94dc-76afdd9ee822}"; //Hansjordnesbukta
+				try {
+					station = URLEncoder.encode(station, "utf-8");
+				} catch (Exception e) {
+
+				}
+			    // Execute the request
+			    HttpResponse response;
+			    try {
+					HttpGet httpget = new HttpGet("http://www.luftkvalitet.info/home/overview.aspx?type=Station&id=" + station);
+
+			        response = httpclient.execute(httpget);
+			        // Examine the response status
+			        Log.i("Praeda",response.getStatusLine().toString());
+
+			        // Get hold of the response entity
+			        HttpEntity entity = response.getEntity();
+			        // If the response does not enclose an entity, there is no need
+			        // to worry about connection release
+
+			        if (entity != null) {
+			            // A Simple JSON Response Read
+			            InputStream instream = entity.getContent();
+			            String result= convertStreamToString(instream);
+			            // now you have the string representation of the HTML request
+			            instream.close();
+						Document doc = Jsoup.parse(result);
+						try{
+							Log.d("result-air", scrapeType(doc, "#ctl00_cph_Map_ctl00_gwStation_ctl02")); // PM10
+						}
+						catch(Exception e){
+						}
+						try{
+							Log.d("result-air", scrapeType(doc, "#ctl00_cph_Map_ctl00_gwStation_ctl03")); // PM2.5
+						}
+						catch(Exception e){
+						}
+						try{
+							Log.d("result-air", scrapeType(doc, "#ctl00_cph_Map_ctl00_gwStation_ctl04")); // NO2
+						}
+						catch(Exception e){
+						}
+
+					}
+			    } catch (Exception e) {
+			    	Log.d("request failed", e.toString());
+			    }
+		    }
+		};
+
+		metThread.start();
+		pollutionThread.start();
+
 
 	}
 
@@ -93,31 +157,35 @@ public class MainActivity extends ActionBarActivity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
-	  private static String convertStreamToString(InputStream is) {
-		    /*
-		     * To convert the InputStream to String we use the BufferedReader.readLine()
-		     * method. We iterate until the BufferedReader return null which means
-		     * there's no more data to read. Each line will appended to a StringBuilder
-		     * and returned as String.
-		     */
-		    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-		    StringBuilder sb = new StringBuilder();
 
-		    String line = null;
-		    try {
-		        while ((line = reader.readLine()) != null) {
-		            sb.append(line + "\n");
-		        }
-		    } catch (IOException e) {
-		        e.printStackTrace();
-		    } finally {
-		        try {
-		            is.close();
-		        } catch (IOException e) {
-		            e.printStackTrace();
-		        }
-		    }
-		    return sb.toString();
+	private static String scrapeType(Document doc, String id){
+        return doc.select(id+"_Label2").text();
+    }
+
+	private static String convertStreamToString(InputStream is) {
+		/*
+		 * To convert the InputStream to String we use the BufferedReader.readLine()
+		 * method. We iterate until the BufferedReader return null which means
+		 * there's no more data to read. Each line will appended to a StringBuilder
+		 * and returned as String.
+		 */
+		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+		StringBuilder sb = new StringBuilder();
+
+		String line = null;
+		try {
+			while ((line = reader.readLine()) != null) {
+				sb.append(line + "\n");
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				is.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
+		return sb.toString();
+	}
 }
