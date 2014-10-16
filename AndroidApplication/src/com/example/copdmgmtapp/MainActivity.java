@@ -28,6 +28,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import java.net.*;
+import android.view.*;
+import android.graphics.*;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -111,6 +113,7 @@ public class MainActivity extends ActionBarActivity {
 						Document doc = Jsoup.parse(result);
 						try{
 							Log.d("result-air", scrapeType(doc, "#ctl00_cph_Map_ctl00_gwStation_ctl02")); // PM10
+							
 						}
 						catch(Exception e){
 						}
@@ -131,11 +134,9 @@ public class MainActivity extends ActionBarActivity {
 			    }
 		    }
 		};
-
 		metThread.start();
 		pollutionThread.start();
-
-
+		//changeBackgroundColor(Color.GREEN);
 	}
 
 	@Override
@@ -158,6 +159,10 @@ public class MainActivity extends ActionBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
+	private void changeBackgroundColor(int color){
+		getWindow().getDecorView().setBackgroundColor(color);
+	}
+	
 	private static String scrapeType(Document doc, String id){
         return doc.select(id+"_Label2").text();
     }
