@@ -17,17 +17,34 @@ import org.jsoup.nodes.Document;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.content.SharedPreferences;
+
+import com.example.copdmgmtapp.calculateBackgroundColor;
+import com.example.copdmgmtapp.pollutionData;
+import android.widget.*;
 
 public class MainActivity extends ActionBarActivity {
-
+	public TextView airPollution;
+	public final pollutionData pollution = new pollutionData();
+	
+	final Handler mHandler = new Handler();
+	final Runnable mUpdateResults = new Runnable() {
+		public void run() {
+			onAirChange(airPollution, pollution);
+			changeBackgroundColor();
+		}
+	};
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		airPollution = (TextView) findViewById(R.id.airInfo);
 		Thread metThread = new Thread()
 		{
 			@Override
@@ -80,68 +97,29 @@ public class MainActivity extends ActionBarActivity {
 			    }
 		    }
 		};
-		Thread pollutionThread = new Thread()
-		{
-			@Override
-		    public void run() 
-		    {
-		    	//API calls example (http://stackoverflow.com/questions/4457492/how-do-i-use-the-simple-http-client-in-android):
-				HttpClient httpclient = new DefaultHttpClient();
-			    // Prepare a request object
-				//String station = "{49ba925d-7e72-4a1f-b4ec-f63086161e29}"; //Tverrforbindelsen
-				String station = "{e3b8f62d-ae81-421a-94dc-76afdd9ee822}"; //Hansjordnesbukta
-				try {
-					station = URLEncoder.encode(station, "utf-8");
-				} catch (Exception e) {
-
-				}
-			    // Execute the request
-			    HttpResponse response;
-			    try {
-					HttpGet httpget = new HttpGet("http://www.luftkvalitet.info/home/overview.aspx?type=Station&id=" + station);
-
-			        response = httpclient.execute(httpget);
-			        // Examine the response status
-			        Log.i("Praeda",response.getStatusLine().toString());
-
-			        // Get hold of the response entity
-			        HttpEntity entity = response.getEntity();
-			        // If the response does not enclose an entity, there is no need
-			        // to worry about connection release
-
-			        if (entity != null) {
-			            // A Simple JSON Response Read
-			            InputStream instream = entity.getContent();
-			            String result= convertStreamToString(instream);
-			            // now you have the string representation of the HTML request
-			            instream.close();
-						Document doc = Jsoup.parse(result);
-						try{
-							Log.d("result-air", scrapeType(doc, "#ctl00_cph_Map_ctl00_gwStation_ctl02")); // PM10
-							
-						}
-						catch(Exception e){
-						}
-						try{
-							Log.d("result-air", scrapeType(doc, "#ctl00_cph_Map_ctl00_gwStation_ctl03")); // PM2.5
-						}
-						catch(Exception e){
-						}
-						try{
-							Log.d("result-air", scrapeType(doc, "#ctl00_cph_Map_ctl00_gwStation_ctl04")); // NO2
-						}
-						catch(Exception e){
-						}
-
-					}
-			    } catch (Exception e) {
-			    	Log.d("request failed", e.toString());
-			    }
-		    }
-		};
 		metThread.start();
-		pollutionThread.start();
-		//changeBackgroundColor(Color.GREEN);
+		startPollutionThread();
+	}
+	
+	public void startPollutionThread(){
+		Thread t = new Thread(){
+			public void run(){
+				pollution.getPollutionData();
+				mHandler.post(mUpdateResults);
+			}
+		};
+		t.start();
+	}
+	
+	public void onAirChange(TextView airPollution, pollutionData pollution){
+		airPollution.setText("PM10: "+pollution.pm10_value+" ("+pollution.pm10_avg+
+							 ")\nPM2.5: "+pollution.pm2_5_value+" ("+pollution.pm2_5_avg+
+							 ")\nNO2: "+pollution.no2_value+" ("+pollution.no2_avg+")");
+	}
+
+	private void changeBackgroundColor(){
+		int color = calculateBackgroundColor.calculate();
+		getWindow().getDecorView().setBackgroundColor(color);
 	}
 
 	@Override
@@ -163,14 +141,6 @@ public class MainActivity extends ActionBarActivity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-
-	private void changeBackgroundColor(int color){
-		getWindow().getDecorView().setBackgroundColor(color);
-	}
-	
-	private static String scrapeType(Document doc, String id){
-        return doc.select(id+"_Label2").text();
-    }
 
 	private static String convertStreamToString(InputStream is) {
 		/*
