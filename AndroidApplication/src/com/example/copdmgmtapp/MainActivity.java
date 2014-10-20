@@ -36,7 +36,7 @@ public class MainActivity extends ActionBarActivity {
 	final Runnable mUpdateResults = new Runnable() {
 		public void run() {
 			onAirChange(airPollution, pollution);
-			changeBackgroundColor();
+			changeBackgroundColor(pollution);
 		}
 	};
 	
@@ -117,8 +117,8 @@ public class MainActivity extends ActionBarActivity {
 							 ")\nNO2: "+pollution.no2_value+" ("+pollution.no2_avg+")");
 	}
 
-	private void changeBackgroundColor(){
-		int color = calculateBackgroundColor.calculate();
+	private void changeBackgroundColor(pollutionData pollution){
+		int color = calculateBackgroundColor.calculate(pollution);
 		getWindow().getDecorView().setBackgroundColor(color);
 	}
 
