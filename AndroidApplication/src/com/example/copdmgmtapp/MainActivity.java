@@ -39,6 +39,12 @@ public class MainActivity extends ActionBarActivity {
 			changeBackgroundColor(pollution);
 		}
 	};
+
+
+    /*
+    final Runnable weatherIconUpdate = () -> {
+
+    };*/
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -121,6 +127,24 @@ public class MainActivity extends ActionBarActivity {
 		int color = calculateBackgroundColor.calculate(pollution);
 		getWindow().getDecorView().setBackgroundColor(color);
 	}
+
+
+    /*
+    private void setWeatherIcon(int weathernumber){
+        //id is the number for the weather type, in symbol after id
+
+        int wiNum = weathernumber;
+        String icon = "";
+
+        switch(wiNum) {
+            case 1: icon = getActivity().getString(R.string.weather_thunder);
+
+
+
+        }
+
+    }*/
+
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
