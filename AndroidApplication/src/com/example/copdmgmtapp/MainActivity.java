@@ -26,11 +26,14 @@ import android.content.SharedPreferences;
 
 import com.example.copdmgmtapp.calculateBackgroundColor;
 import com.example.copdmgmtapp.pollutionData;
+import com.example.copdmgmtapp.WeatherInfo;
 import android.widget.*;
 
 public class MainActivity extends ActionBarActivity {
 	public TextView airPollution;
+    public TextView weatherIcon;
 	public final pollutionData pollution = new pollutionData();
+    public final WeatherInfo weatherInfo = new WeatherInfo();
 	
 	final Handler mHandler = new Handler();
 	final Runnable mUpdateResults = new Runnable() {
@@ -40,17 +43,18 @@ public class MainActivity extends ActionBarActivity {
 		}
 	};
 
-
-    /*
-    final Runnable weatherIconUpdate = () -> {
-
-    };*/
+    final Runnable mUpdateWeather = new Runnable() {
+        public void run() {
+            onWeatherChange();
+        }
+    };
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		airPollution = (TextView) findViewById(R.id.airInfo);
+        weatherIcon = (TextView) findViewById(R.id.weather_icon);
 		Thread metThread = new Thread()
 		{
 			@Override
@@ -116,6 +120,17 @@ public class MainActivity extends ActionBarActivity {
 		};
 		t.start();
 	}
+
+    public void startWeatherThread(){
+        Thread t = new Thread(){
+            public void run(){
+                //faktiske værinforkoden - weatherinfo
+                weatherInfo.getWeatherInfo();
+                mHandler.post(mUpdateWeather);
+            }
+        };
+        t.start();
+    }
 	
 	public void onAirChange(TextView airPollution, pollutionData pollution){
 		airPollution.setText("PM10: "+pollution.pm10_value+" ("+pollution.pm10_avg+
@@ -123,27 +138,15 @@ public class MainActivity extends ActionBarActivity {
 							 ")\nNO2: "+pollution.no2_value+" ("+pollution.no2_avg+")");
 	}
 
+    public void onWeatherChange(){
+        //bytte av skjerminformasjon
+        return;
+    }
+
 	private void changeBackgroundColor(pollutionData pollution){
 		int color = calculateBackgroundColor.calculate(pollution);
 		getWindow().getDecorView().setBackgroundColor(color);
 	}
-
-
-    /*
-    private void setWeatherIcon(int weathernumber){
-        //id is the number for the weather type, in symbol after id
-
-        int wiNum = weathernumber;
-        String icon = "";
-
-        switch(wiNum) {
-            case 1: icon = getActivity().getString(R.string.weather_thunder);
-
-
-
-        }
-
-    }*/
 
 
 	@Override

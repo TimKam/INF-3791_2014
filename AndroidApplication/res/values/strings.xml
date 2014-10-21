@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">Air Pollution</string>
-    <string name="place">Location</string>
+    <string name="place">Tromsø</string>
     <string name="weather">SUN</string>
     <string name="temperature">Temp</string>
     <string name="windInfo">Wind</string>
