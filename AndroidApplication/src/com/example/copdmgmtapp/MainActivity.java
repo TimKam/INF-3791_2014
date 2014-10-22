@@ -77,7 +77,8 @@ public class MainActivity extends ActionBarActivity {
 			    currentLatitude +
 			    ";lon=" +
 			    currentLongitude +
-			    ";msl=70"); 
+			    ";msl=70");
+
 
 			    // Execute the request
 			    HttpResponse response;
@@ -93,10 +94,10 @@ public class MainActivity extends ActionBarActivity {
 
 			        if (entity != null) {
 
-			            // A Simple JSON Response Read
+			            // A Simple XML file Read
 			            InputStream instream = entity.getContent();
-			            String result= convertStreamToString(instream);
-			            Log.d("response", result);
+			            //String result= convertStreamToString(instream);
+			            //Log.d("response", result);
 			            // now you have the string representation of the HTML request
 			            instream.close();
 			        }
@@ -109,6 +110,7 @@ public class MainActivity extends ActionBarActivity {
 		};
 		metThread.start();
 		startPollutionThread();
+        startWeatherThread();
 	}
 	
 	public void startPollutionThread(){
@@ -124,7 +126,6 @@ public class MainActivity extends ActionBarActivity {
     public void startWeatherThread(){
         Thread t = new Thread(){
             public void run(){
-                //faktiske værinforkoden - weatherinfo
                 weatherInfo.getWeatherInfo();
                 mHandler.post(mUpdateWeather);
             }
