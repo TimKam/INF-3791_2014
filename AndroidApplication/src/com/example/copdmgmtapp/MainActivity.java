@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Calendar;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationManager;
@@ -13,32 +14,37 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import com.example.copdmgmtapp.calculateBackgroundColor;
-import com.example.copdmgmtapp.pollutionData;
-import com.example.copdmgmtapp.WeatherInfo;
 import android.widget.*;
-
 
 public class MainActivity extends ActionBarActivity {
 	public TextView airPollution;
     public TextView weatherIcon;
     public TextView weatherTemp;
     public TextView weatherWind;
-    //public TextView weatherHum;
+	public TextView traffic; 
+	public int updatedWeather = 0;
+	public int updatedPollution = 0;
 	public final pollutionData pollution = new pollutionData();
     public final WeatherInfo weatherInfo = new WeatherInfo();
 	
 	final Handler mHandler = new Handler();
-	final Runnable mUpdateResults = new Runnable() {
+	final Runnable mUpdatePollution = new Runnable() {
 		public void run() {
-			onAirChange(airPollution, pollution);
-			changeBackgroundColor(pollution);
+			onAirChange();
+			updatedPollution = 1;
+			if (updatedPollution == 1 && updatedWeather == 1){
+				changeBackgroundColor();
+			}
 		}
 	};
-
     final Runnable mUpdateWeather = new Runnable() {
         public void run() {
             onWeatherChange(weatherInfo);
+			updatedWeather = 1;
+			onTrafficChange();
+			if (updatedPollution == 1 && updatedWeather == 1){
+				changeBackgroundColor();
+			}
         }
     };
 	
@@ -50,21 +56,19 @@ public class MainActivity extends ActionBarActivity {
         weatherIcon = (TextView) findViewById(R.id.weather_icon);
         weatherTemp = (TextView) findViewById(R.id.textTemp);
         weatherWind = (TextView) findViewById(R.id.windInfo);
+		traffic = (TextView) findViewById(R.id.TrafficInfo);
 
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         String locationProvider = LocationManager.GPS_PROVIDER;
         Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
         double currentLatitude = lastKnownLocation.getLatitude();
-        Log.d("current latitude", String.valueOf(currentLatitude));
         double currentLongitude = lastKnownLocation.getLongitude();
-        Log.d("current longitude", String.valueOf(currentLongitude));
 
         weatherInfo.setLatLon(currentLatitude, currentLongitude);
 
         String FontPath = "weather.ttf";
         Typeface tf = Typeface.createFromAsset(getAssets(), FontPath);
         weatherIcon.setTypeface(tf);
-
 
 		startPollutionThread();
         startWeatherThread();
@@ -74,7 +78,7 @@ public class MainActivity extends ActionBarActivity {
 		Thread t = new Thread(){
 			public void run(){
 				pollution.getPollutionData();
-				mHandler.post(mUpdateResults);
+				mHandler.post(mUpdatePollution);
 			}
 		};
 		t.start();
@@ -90,7 +94,7 @@ public class MainActivity extends ActionBarActivity {
         t.start();
     }
 	
-	public void onAirChange(TextView airPollution, pollutionData pollution){
+	public void onAirChange(){
 		airPollution.setText("PM10: "+pollution.pm10_value+" ("+pollution.pm10_avg+
 							 ")\nPM2.5: "+pollution.pm2_5_value+" ("+pollution.pm2_5_avg+
 							 ")\nNO2: "+pollution.no2_value+" ("+pollution.no2_avg+")");
@@ -121,12 +125,26 @@ public class MainActivity extends ActionBarActivity {
         }else if(intIcon == 46){
             weatherIcon.setText(R.string.weather_drizzle);
         }else {
-            weatherIcon.setText("Unknow weather :)");
+            weatherIcon.setText("Unknown weather :)");
         }
         return;
     }
+	
+	public void onTrafficChange(){
+		Calendar c = Calendar.getInstance();
+		int hour = c.get(Calendar.HOUR_OF_DAY);
+		if ((hour >= 7 && hour <= 9) || (hour >= 15 && hour <= 17)){
+			traffic.setText(R.string.traffic_rush);
+		}else if (hour >= 8 && hour <= 16){
+			traffic.setText(R.string.traffic_work);
+		}else if (hour >= 6 && hour <= 18){
+			traffic.setText(R.string.traffic_day);
+		}else {
+			traffic.setText(R.string.traffic_night);
+		}
+	}
 
-	private void changeBackgroundColor(pollutionData pollution){
+	private void changeBackgroundColor(){
 		int color = calculateBackgroundColor.calculate(pollution, weatherInfo);
 		getWindow().getDecorView().setBackgroundColor(color);
 	}
@@ -150,32 +168,5 @@ public class MainActivity extends ActionBarActivity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
-	}
-
-	private static String convertStreamToString(InputStream is) {
-		/*
-		 * To convert the InputStream to String we use the BufferedReader.readLine()
-		 * method. We iterate until the BufferedReader return null which means
-		 * there's no more data to read. Each line will appended to a StringBuilder
-		 * and returned as String.
-		 */
-		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-		StringBuilder sb = new StringBuilder();
-
-		String line = null;
-		try {
-			while ((line = reader.readLine()) != null) {
-				sb.append(line + "\n");
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				is.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		return sb.toString();
 	}
 }

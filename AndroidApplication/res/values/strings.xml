@@ -3,13 +3,12 @@
 
     <string name="app_name">COPD App</string>
     <string name="place">Tromsø</string>
-    <string name="weather"></string>
-    <string name="temperature"></string>
-    <string name="windInfo"></string>
-    <string name="airPol"></string>
-    <string name="trafficText"></string>
     <string name="action_settings">Settings</string>
 
+	<string name="traffic_rush">Rushtid</string>
+	<string name="traffic_work">Arbeidstid</string>
+	<string name="traffic_day">Utenfor arbeidstid</string>
+	<string name="traffic_night">Nattrafikk</string>
 
     <string name="weather_sunny">&#xf00d;</string>
     <string name="weather_lightrainsun">&#xf006;</string>

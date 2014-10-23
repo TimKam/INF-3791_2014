@@ -89,16 +89,11 @@ public class WeatherInfo
                 Element windele = (Element) windlist.item(0);
                 Element humele = (Element) humlist.item(0);
 
-
                 wi_icon = symbolele.getAttribute("number");
                 wi_temp = tempele.getAttribute("value");
                 wi_wind = windele.getAttribute("name");
                 wi_windspeed = windele.getAttribute("mps");
                 wi_hum = humele.getAttribute("value");
-
-
-                Log.d("penis:" , symbolele.getAttribute("number"));
-
 
                 instream.close();
             }

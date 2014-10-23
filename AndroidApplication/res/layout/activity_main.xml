@@ -36,7 +36,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="200dp"
                     android:textSize="80sp"
-                    android:text="@string/weather"/>
+					/>
         </RelativeLayout>
 
         <RelativeLayout
@@ -48,7 +48,6 @@
 
             <TextView
                     android:id="@+id/textTemp"
-                    android:text="@string/temperature"
                     android:textSize="30sp"
                     android:gravity="end"
                     android:layout_width="fill_parent"
@@ -57,7 +56,6 @@
 
             <TextView
                     android:id="@+id/windInfo"
-                    android:text="@string/windInfo"
                     android:textSize="30sp"
                     android:gravity="end"
                     android:layout_width="fill_parent"
@@ -70,7 +68,7 @@
 
     <TextView
             android:id="@+id/TrafficInfo"
-            android:text="@string/trafficText"
+			android:textSize="25sp"
             android:layout_width="fill_parent"
             android:layout_height="100dp"
             android:layout_below="@+id/weatherInformation"
@@ -78,7 +76,6 @@
 
     <TextView
             android:id="@+id/airInfo"
-            android:text="@string/airPol"
             android:textSize="25sp"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"

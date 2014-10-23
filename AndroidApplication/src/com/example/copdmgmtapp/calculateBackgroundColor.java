@@ -1,6 +1,7 @@
 package com.example.copdmgmtapp;
 
 import android.util.Log;
+import java.util.Calendar;
 
 public class calculateBackgroundColor
 {
@@ -24,8 +25,18 @@ public class calculateBackgroundColor
 
         double air_dangernumber = pm10 + (pm2_5*20) + (no2*2.5);
 
-        //TODO Fix traffic
-        double traffic_dangernumber = 50;
+        double traffic_dangernumber;
+		Calendar c = Calendar.getInstance();
+		int hour = c.get(Calendar.HOUR_OF_DAY);
+		if ((hour >= 7 && hour <= 9) || (hour >= 15 && hour <= 17)){
+			traffic_dangernumber = 100;
+		}else if (hour >= 8 && hour <= 16){
+			traffic_dangernumber = 50;
+		}else if (hour >= 6 && hour <= 18){
+			traffic_dangernumber = 10;
+		}else {
+			traffic_dangernumber = 0;
+		}
 
 
         if(wind <= 5){
@@ -52,8 +63,6 @@ public class calculateBackgroundColor
         }
 
         double total_danger = air_dangernumber + wind_dangernumber + temp_dangernumber + traffic_dangernumber;
-
-        Log.d("fetta: ", String.valueOf(total_danger));
 
 		if (total_danger > R_Value){
 			color = Red;
