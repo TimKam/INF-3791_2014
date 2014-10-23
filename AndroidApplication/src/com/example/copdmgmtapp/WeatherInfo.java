@@ -1,33 +1,19 @@
 package com.example.copdmgmtapp;
 
 import java.io.*;
-import java.net.URLEncoder;
-
-import android.location.Location;
-import android.location.LocationManager;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.jsoup.Jsoup;
-
 import android.util.Log;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-
-import org.w3c.dom.UserDataHandler;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
+
 
 public class WeatherInfo
 {
@@ -36,6 +22,8 @@ public class WeatherInfo
     String wi_windspeed;
     String wi_icon;
     String wi_hum;
+    Double lat = 0.0;
+    Double lon = 0.0;
 
     public WeatherInfo(){
         wi_temp = "";
@@ -45,9 +33,15 @@ public class WeatherInfo
         wi_hum = "";
     }
 
+    public void setLatLon(double inlat, double inlon){
 
+        lat = inlat;
+        lon = inlon;
+
+    }
 
     public void getWeatherInfo() {
+
         Document doc = null;
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
@@ -56,7 +50,13 @@ public class WeatherInfo
         HttpClient httpclient = new DefaultHttpClient();
         // Execute the request
         HttpResponse response;
-        HttpGet httpget = new HttpGet("http://api.met.no/weatherapi/locationforecast/1.9/?lat=69.67;lon=18.92");
+
+
+        HttpGet httpget = new HttpGet("http://api.met.no/weatherapi/locationforecast/1.9/?lat=" +
+                lat +
+                ";lon=" +
+                lon +
+                ";msl=70");
 
         try {
             response = httpclient.execute(httpget);

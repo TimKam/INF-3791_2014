@@ -15,10 +15,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import android.util.Log;
 
-import android.content.SharedPreferences;
-import android.widget.*;
-import android.app.*;
-
 public class pollutionData
 {
 	String pm10_value;
