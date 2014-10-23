@@ -2,8 +2,8 @@ package com.example.copdmgmtapp;
 
 public class calculateBackgroundColor
 {
-	static final double R_Value = 25.0;
-	static final double Y_Value = 15.0;
+	static final double R_Value = 50.0;
+	static final double Y_Value = 35.0;
 	
 	public static int calculate(pollutionData pollution){
 		int color = 0xff78ff78; // GREEN

@@ -15,37 +15,48 @@ import org.jsoup.Jsoup;
 import android.util.Log;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+
+import org.w3c.dom.UserDataHandler;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
 public class WeatherInfo
 {
     String wi_temp;
     String wi_wind;
-    int wi_icon;
+    String wi_windspeed;
+    String wi_icon;
+    String wi_hum;
 
     public WeatherInfo(){
-        String wi_temp = "";
-        String wi_wind = "";
-        int wi_icon = 0;
+        wi_temp = "";
+        wi_wind = "";
+        wi_windspeed = "";
+        wi_icon = "";
+        wi_hum = "";
     }
 
 
 
     public void getWeatherInfo() {
-
+        Document doc = null;
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder;
-        InputSource is;
+
 
         //API calls example (http://stackoverflow.com/questions/4457492/how-do-i-use-the-simple-http-client-in-android):
         HttpClient httpclient = new DefaultHttpClient();
         // Execute the request
         HttpResponse response;
-        HttpGet httpget = new HttpGet("http://api.met.no/weatherapi/locationforecast/1.9/?lat=60.10;lon=9.58");
+        HttpGet httpget = new HttpGet("http://api.met.no/weatherapi/locationforecast/1.9/?lat=69.67;lon=18.92");
 
         try {
             response = httpclient.execute(httpget);
@@ -54,26 +65,41 @@ public class WeatherInfo
 
             // Get hold of the response entity
             HttpEntity entity = response.getEntity();
+
             // If the response does not enclose an entity, there is no need
             // to worry about connection release
-
             if (entity != null) {
-
                 // A Simple XML Response Read
                 InputStream instream = entity.getContent();
                 String result = convertStreamToString(instream);
-                Log.d("response", result);
+                //Log.d("response", result);
 
-                builder = factory.newDocumentBuilder();
-                is = new InputSource(new StringReader(result));
+                DocumentBuilder builder = factory.newDocumentBuilder();
+                InputSource is = new InputSource();
+                is.setCharacterStream(new StringReader(result));
 
-                Document doc = builder.parse(result);
+                doc = builder.parse(is);
 
-                NodeList list = doc.getElementsByTagName("meta");
+                NodeList symbollist = doc.getElementsByTagName("symbol");
+                NodeList templist = doc.getElementsByTagName("temperature");
+                NodeList windlist = doc.getElementsByTagName("windSpeed");
+                NodeList humlist = doc.getElementsByTagName("humidity");
+                Element symbolele = (Element) symbollist.item(0);
+                Element tempele = (Element) templist.item(0);
+                Element windele = (Element) windlist.item(0);
+                Element humele = (Element) humlist.item(0);
 
-                Log.d("penis:" , list.item(0).getTextContent());
 
-                // now you have the string representation of the HTML request
+                wi_icon = symbolele.getAttribute("number");
+                wi_temp = tempele.getAttribute("value");
+                wi_wind = windele.getAttribute("name");
+                wi_windspeed = windele.getAttribute("mps");
+                wi_hum = humele.getAttribute("value");
+
+
+                Log.d("penis:" , symbolele.getAttribute("number"));
+
+
                 instream.close();
             }
 

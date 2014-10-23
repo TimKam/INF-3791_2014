@@ -35,6 +35,7 @@
                     android:id="@+id/weather_icon"
                     android:layout_width="fill_parent"
                     android:layout_height="200dp"
+                    android:textSize="80sp"
                     android:text="@string/weather"/>
         </RelativeLayout>
 
@@ -66,20 +67,11 @@
     </LinearLayout>
 
     <TextView
-            android:id="@+id/helloText"
-            android:layout_marginLeft="8dp"
-            android:layout_width="fill_parent"
-            android:layout_height="100dp"
-            android:text="@string/hello_world"
-            android:layout_below="@+id/weatherInformation"
-            />
-
-    <TextView
             android:id="@+id/TrafficInfo"
             android:text="@string/trafficText"
             android:layout_width="fill_parent"
             android:layout_height="100dp"
-            android:layout_below="@+id/helloText"
+            android:layout_below="@+id/weatherInformation"
             android:layout_marginLeft="8dp"/>
 
     <TextView

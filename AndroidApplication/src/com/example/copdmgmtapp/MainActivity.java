@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URLEncoder;
 
+import android.graphics.Typeface;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -32,6 +33,9 @@ import android.widget.*;
 public class MainActivity extends ActionBarActivity {
 	public TextView airPollution;
     public TextView weatherIcon;
+    public TextView weatherTemp;
+    public TextView weatherWind;
+    //public TextView weatherHum;
 	public final pollutionData pollution = new pollutionData();
     public final WeatherInfo weatherInfo = new WeatherInfo();
 	
@@ -45,7 +49,7 @@ public class MainActivity extends ActionBarActivity {
 
     final Runnable mUpdateWeather = new Runnable() {
         public void run() {
-            onWeatherChange();
+            onWeatherChange(weatherInfo);
         }
     };
 	
@@ -55,6 +59,14 @@ public class MainActivity extends ActionBarActivity {
 		setContentView(R.layout.activity_main);
 		airPollution = (TextView) findViewById(R.id.airInfo);
         weatherIcon = (TextView) findViewById(R.id.weather_icon);
+        weatherTemp = (TextView) findViewById(R.id.textTemp);
+        weatherWind = (TextView) findViewById(R.id.windInfo);
+        //weatherHum = (TextView) findViewById(R.id.weatherHumidity);
+
+        String FontPath = "weather.ttf";
+        Typeface tf = Typeface.createFromAsset(getAssets(), FontPath);
+        weatherIcon.setTypeface(tf);
+
 		Thread metThread = new Thread()
 		{
 			@Override
@@ -139,8 +151,33 @@ public class MainActivity extends ActionBarActivity {
 							 ")\nNO2: "+pollution.no2_value+" ("+pollution.no2_avg+")");
 	}
 
-    public void onWeatherChange(){
-        //bytte av skjerminformasjon
+    public void onWeatherChange(WeatherInfo info){
+        weatherTemp.setText(info.wi_temp+" \u2103"+
+                            "\n"+info.wi_hum+" % Luftfuktighet");
+        weatherWind.setText(info.wi_wind+
+                            "\n "+info.wi_windspeed+" m/s");
+
+        int intIcon = Integer.parseInt(info.wi_icon);
+
+        if(intIcon == 1){
+            weatherIcon.setText(R.string.weather_sunny);
+        } else if(intIcon >= 2 && intIcon <= 4) {
+            weatherIcon.setText(R.string.weather_cloudy);
+        } else if(intIcon >= 5 && intIcon <= 8){
+            weatherIcon.setText(R.string.weather_lightrainsun);
+        }else if(intIcon >= 9 && intIcon <= 10){
+            weatherIcon.setText(R.string.weather_rainy);
+        }else if(intIcon == 11 || intIcon >= 20 && intIcon <= 34){
+            weatherIcon.setText(R.string.weather_thunder);
+        }else if(intIcon == 12 || intIcon == 13 || intIcon == 49 || intIcon == 50 ){
+            weatherIcon.setText(R.string.weather_snowy);
+        }else if(intIcon == 15){
+            weatherIcon.setText(R.string.weather_foggy);
+        }else if(intIcon == 46){
+            weatherIcon.setText(R.string.weather_drizzle);
+        }else {
+            weatherIcon.setText("Unknow weather :)");
+        }
         return;
     }
 
